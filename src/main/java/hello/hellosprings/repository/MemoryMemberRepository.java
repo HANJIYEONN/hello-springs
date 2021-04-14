@@ -2,10 +2,7 @@ package hello.hellosprings.repository;
 
 import hello.hellosprings.domain.Member;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MemoryMemberRepository implements MemberRepository {
 
@@ -18,19 +15,26 @@ public class MemoryMemberRepository implements MemberRepository {
         store.put(member.getId(), member);
         return member;
     }
-
+    // NULL이 반환될 가능성이 있으면 optional로 감싸줌. 클라이언트에서 뭔가 할 수있음
     @Override
     public Optional<Member> findById(Long id) {
-        return Optional.empty();
+        return Optional.ofNullable(store.get(id));
     }
 
     @Override
     public Optional<Member> findByName(String name) {
-        return Optional.empty();
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny();
+
     }
 
     @Override
     public List<Member> findAll() {
-        return null;
+        return new ArrayList<>(store.values());
+    }
+
+    public void clearStore() {
+        store.clear();
     }
 }
